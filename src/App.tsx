@@ -9,7 +9,6 @@ function App() {
 	const dispatch = useDispatch();
 
 	const handelClick = () => {
-		console.log("first");
 		dispatch({ type: Type.INCREMENT });
 	};
 

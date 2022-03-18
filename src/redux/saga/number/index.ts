@@ -1,14 +1,33 @@
-import { all, put, takeEvery } from "redux-saga/effects";
+import axios from "axios";
+import {
+	all,
+	call,
+	debounce,
+	put,
+	takeEvery,
+	takeLatest,
+	takeLeading,
+	throttle,
+} from "redux-saga/effects";
 import * as Types from "redux/constant";
 
+function getDataUser() {
+	return axios
+		.get("https://jsonplaceholder.typicode.com/posts/2")
+		.then((response) => ({ response }))
+		.catch((error) => ({ error }));
+}
+
 export function* incrementNumber(payload: any) {
-	console.log(
-		"🚀 ~ file: index.ts ~ line 5 ~ function*incrementNumber ~ payload",
-		payload
-	);
-	yield put({ type: Types.INCREMENT_SUCCESS, payload: payload});
+	const { response, error } = yield call(getDataUser);
+	if (response) {
+		console.log("response", response);
+		yield put({ type: Types.INCREMENT_SUCCESS, payload: response.data });
+	} else {
+		console.log(error);
+	}
 }
 
 export default function* numberSaga() {
-	yield all([takeEvery(Types.INCREMENT, incrementNumber)]);
+	yield takeLatest(Types.INCREMENT, incrementNumber);
 }
